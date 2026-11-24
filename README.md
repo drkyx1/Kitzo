@@ -23,6 +23,7 @@ limpar e documentar o computador. Nada é instalado na máquina.
   - [Programas](#programas)
   - [Rede](#rede)
   - [Segurança](#segurança)
+  - [Personalizar](#personalizar)
   - [Histórico por máquina](#histórico-por-máquina)
   - [Relatório](#relatório)
   - [Celular e telas pequenas](#celular-e-telas-pequenas)
@@ -52,7 +53,8 @@ Para o **técnico de TI** que atende vários computadores e quer, em poucos minu
 | | |
 |---|---|
 | 🔌 **Portátil** | Roda de qualquer letra de unidade; usa só o PowerShell 5.1 que já vem no Windows 10/11 |
-| 🖥️ **Painel moderno** | Tema escuro, menu lateral, responsivo, em português do Brasil |
+| 🖥️ **Painel moderno** | Tema escuro/claro, cor de destaque, menu lateral recolhível, responsivo, em português do Brasil |
+| 🎨 **Personalizável** | Visual do painel ajustável e ajustes do Windows (tema, barra de tarefas, Explorador) em uma tela |
 | ⏱️ **Saída ao vivo** | Comandos demorados mostram o console, a barra de progresso e o cronômetro em tempo real |
 | 🗂️ **Histórico por máquina** | Reconhece o PC pelo hardware e lembra tudo o que já foi feito nele |
 | 👻 **Segundo plano** | Sem janela preta; fecha sozinho quando o navegador é fechado (mas nunca no meio de um reparo) |
@@ -129,6 +131,24 @@ UAC, Secure Boot, BitLocker, última atualização instalada e **ameaças dos ú
 Ações: **varredura rápida**, **atualizar definições de vírus** e **procurar atualizações pendentes do Windows**.
 
 ![Tela Segurança](docs/img/08-seguranca.png)
+
+### Personalizar
+
+Duas áreas na mesma tela:
+
+**Aparência deste painel** (salva só no navegador, não altera o Windows)
+- tema **escuro, claro ou automático** (há também um botão de lua/sol no topo);
+- **cor de destaque** (9 cores prontas ou qualquer cor) e **perfis prontos**: Padrão Kitzo, Oceano, Floresta, Pôr do sol, Violeta neon e Claro limpo;
+- fundo liso ou em gradiente, densidade compacta, tamanho do texto, arredondamento dos cantos, animações ligadas/desligadas e **menu lateral recolhido** (só ícones).
+
+**Personalização do Windows** (só o usuário atual, todos os ajustes reversíveis na mesma tela)
+- **Aparência:** modo escuro nos aplicativos e no sistema, transparência, cor de destaque nas barras de título;
+- **Barra de tarefas:** alinhamento (centro/esquerda), caixa de pesquisa, botões Visão de Tarefas, Widgets e Chat;
+- **Explorador de Arquivos:** extensões, arquivos ocultos e protegidos, pasta de abertura, espaçamento compacto, barra de status e menu de clique direito clássico (Windows 11);
+- **Área de trabalho:** ícones de Este Computador, pasta do usuário, Rede e Lixeira.
+
+Alguns ajustes pedem **reiniciar o Explorador de Arquivos**; a tela oferece o botão. Ajustes de Windows 11 não têm efeito no Windows 10,
+e o Windows pode bloquear alguns (ex.: Widgets) em certas versões. Cada mudança é conferida depois de aplicada e entra no histórico da máquina.
 
 ### Histórico por máquina
 
@@ -227,7 +247,7 @@ Ferramenta/
 │   ├─ relatorio.ps1        relatórios
 │   ├─ historico.ps1        histórico por máquina
 │   └─ tarefas/             scripts que rodam em processo separado
-├─ web/                     painel (HTML, CSS e JavaScript puros, sem internet)
+├─ web/                     painel (HTML, CSS e JavaScript puros, sem internet; tema.js aplica o visual salvo)
 ├─ docs/img/                imagens deste README
 └─ logs/                    registros (criado automaticamente)
 ```
