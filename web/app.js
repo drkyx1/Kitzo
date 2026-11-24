@@ -68,6 +68,10 @@ const Icones = {
   energia: '<path d="M12 3v9"/><path d="M6.3 6.3a8 8 0 1 0 11.4 0"/>',
   menu: '<path d="M4 6h16M4 12h16M4 18h16"/>',
   relogio: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  paleta: '<path d="M12 3a9 9 0 1 0 0 18c1.4 0 2-1 2-2 0-1.5-1-1.7-1-3 0-1 .8-2 2-2h2.5A3.5 3.5 0 0 0 21 10.5C21 6.4 17 3 12 3z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7" r="1"/>',
+  lua: '<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>',
+  sol: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  recolher: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/>',
 };
 const icone = (nome) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${Icones[nome] || ''}</svg>`;
 
@@ -179,6 +183,7 @@ const Paginas = {
   programas: { titulo: 'Programas', render: paginaProgramas },
   rede: { titulo: 'Rede', render: paginaRede },
   seguranca: { titulo: 'Segurança', render: paginaSeguranca },
+  personalizar: { titulo: 'Personalizar', render: paginaPersonalizar },
   relatorio: { titulo: 'Relatório', render: paginaRelatorio },
   historico: { titulo: 'Histórico', render: paginaHistorico },
 };
@@ -1283,6 +1288,138 @@ async function paginaSeguranca(el, ativa) {
   await carregarStatus();
 }
 
+
+// ---------------------------------------------------------------------
+// Página: Personalizar (aparência do painel + ajustes do Windows)
+// ---------------------------------------------------------------------
+const CoresDestaque = [
+  ['#4aa8ff', 'Azul'], ['#7c8cff', 'Índigo'], ['#a66bff', 'Violeta'], ['#ff6bb5', 'Rosa'],
+  ['#ff6b6b', 'Vermelho'], ['#ff9d4a', 'Laranja'], ['#f5c542', 'Amarelo'], ['#3ccf8e', 'Verde'], ['#2dd4d4', 'Turquesa'],
+];
+const PerfisVisuais = [
+  { nome: 'Padrão Kitzo', cor: '#4aa8ff', p: { tema: 'escuro', destaque: '#4aa8ff', fundo: 'liso', raio: 12 } },
+  { nome: 'Oceano', cor: '#2dd4d4', p: { tema: 'escuro', destaque: '#2dd4d4', fundo: 'gradiente', raio: 14 } },
+  { nome: 'Floresta', cor: '#3ccf8e', p: { tema: 'escuro', destaque: '#3ccf8e', fundo: 'gradiente', raio: 10 } },
+  { nome: 'Pôr do sol', cor: '#ff9d4a', p: { tema: 'escuro', destaque: '#ff9d4a', fundo: 'gradiente', raio: 16 } },
+  { nome: 'Violeta neon', cor: '#a66bff', p: { tema: 'escuro', destaque: '#a66bff', fundo: 'gradiente', raio: 12 } },
+  { nome: 'Claro limpo', cor: '#2f7fd6', p: { tema: 'claro', destaque: '#2f7fd6', fundo: 'liso', raio: 10 } },
+];
+
+function alternarTema() {
+  const atual = document.documentElement.dataset.tema;
+  salvarPrefs({ tema: atual === 'claro' ? 'escuro' : 'claro' });
+  atualizarBotaoTema();
+}
+function atualizarBotaoTema() {
+  const b = $('#btnTema');
+  if (!b) return;
+  b.innerHTML = icone(document.documentElement.dataset.tema === 'claro' ? 'sol' : 'lua');
+}
+
+const segmentos = (nome, opcoes, atual) => `<div class="segmentos" role="group" data-seg="${esc(nome)}">${
+  opcoes.map(([v, r]) => `<button type="button" data-v="${esc(v)}" class="${String(v) === String(atual) ? 'ativo' : ''}">${esc(r)}</button>`).join('')}</div>`;
+const interruptor = (nome, marcado, rotulo) => `<label class="interruptor"><input type="checkbox" data-sw="${esc(nome)}" ${marcado ? 'checked' : ''} aria-label="${esc(rotulo)}"><span></span></label>`;
+const linhaPers = (titulo, desc, controle) => `<div class="pers-linha"><div><strong>${esc(titulo)}</strong><span class="suave">${esc(desc)}</span></div>${controle}</div>`;
+
+function renderAparencia(el) {
+  const p = lerPrefs();
+  const personalizada = !CoresDestaque.some(([c]) => c.toLowerCase() === p.destaque.toLowerCase());
+  el.innerHTML = `
+    <h3 style="margin-top:0">Perfis prontos</h3>
+    <div class="perfis">${PerfisVisuais.map((f, i) => `<button type="button" class="perfil" data-perfil="${i}"><i style="background:${f.cor}"></i><strong>${esc(f.nome)}</strong></button>`).join('')}</div>
+    <h3>Ajustes</h3>
+    ${linhaPers('Tema', 'Escuro, claro ou igual ao do Windows.', segmentos('tema', [['escuro', 'Escuro'], ['claro', 'Claro'], ['auto', 'Automático']], p.tema))}
+    ${linhaPers('Cor de destaque', 'Botões, links, menu e indicadores.', `<div class="cores">${
+      CoresDestaque.map(([c, n]) => `<button type="button" class="cor ${c.toLowerCase() === p.destaque.toLowerCase() ? 'ativo' : ''}" data-cor="${c}" style="background:${c}" title="${n}" aria-label="${n}"></button>`).join('')
+    }<input type="color" class="cor ${personalizada ? 'ativo' : ''}" id="corLivre" value="${esc(p.destaque)}" title="Outra cor" aria-label="Escolher outra cor"></div>`)}
+    ${linhaPers('Fundo', 'Liso ou com brilho suave da cor de destaque.', segmentos('fundo', [['liso', 'Liso'], ['gradiente', 'Gradiente']], p.fundo))}
+    ${linhaPers('Densidade', 'Compacta mostra mais informação por tela.', segmentos('densidade', [['confortavel', 'Confortável'], ['compacta', 'Compacta']], p.densidade))}
+    ${linhaPers('Tamanho do texto', `${p.fonte}px`, `<input type="range" min="12" max="18" step="1" value="${p.fonte}" data-faixa="fonte" aria-label="Tamanho do texto">`)}
+    ${linhaPers('Arredondamento', `${p.raio}px`, `<input type="range" min="0" max="20" step="2" value="${p.raio}" data-faixa="raio" aria-label="Arredondamento dos cantos">`)}
+    ${linhaPers('Menu lateral recolhido', 'Mostra só os ícones (mais espaço para o conteúdo).', interruptor('recolhida', p.recolhida, 'Menu recolhido'))}
+    ${linhaPers('Animações', 'Desligue em PCs lentos ou se preferir menos movimento.', interruptor('animacoes', p.animacoes, 'Animações'))}
+    <div class="linha-botoes"><button type="button" class="botao botao-fantasma" id="prefsReset">Restaurar visual padrão</button></div>
+    <p class="suave pequeno">Estas preferências ficam salvas apenas neste navegador e não alteram o Windows.</p>`;
+
+  const refazer = () => { renderAparencia(el); atualizarBotaoTema(); };
+  el.querySelectorAll('[data-perfil]').forEach((b) => b.addEventListener('click', () => { salvarPrefs(PerfisVisuais[b.dataset.perfil].p); refazer(); }));
+  el.querySelectorAll('[data-seg] button').forEach((b) => b.addEventListener('click', () => { salvarPrefs({ [b.parentElement.dataset.seg]: b.dataset.v }); refazer(); }));
+  el.querySelectorAll('[data-cor]').forEach((b) => b.addEventListener('click', () => { salvarPrefs({ destaque: b.dataset.cor }); refazer(); }));
+  $('#corLivre', el).addEventListener('change', (e) => { salvarPrefs({ destaque: e.target.value }); refazer(); });
+  el.querySelectorAll('[data-sw]').forEach((i) => i.addEventListener('change', () => salvarPrefs({ [i.dataset.sw]: i.checked })));
+  el.querySelectorAll('[data-faixa]').forEach((r) => r.addEventListener('input', () => {
+    salvarPrefs({ [r.dataset.faixa]: Number(r.value) });
+    r.closest('.pers-linha').querySelector('.suave').textContent = `${r.value}px`;
+  }));
+  $('#prefsReset', el).addEventListener('click', () => { salvarPrefs({ ...PrefsPadrao }); refazer(); avisar('Visual padrão restaurado.', 'sucesso'); });
+}
+
+function renderAjustesWindows(d, alvo, ativa) {
+  const grupos = {};
+  d.ajustes.forEach((a) => { (grupos[a.grupo] ||= []).push(a); });
+  let confirmouNaSessao = false;
+
+  const controle = (a) => {
+    if (a.opcoes.length === 2) {
+      const ligado = a.opcoes[0].valor; // a 1ª opção é sempre o estado "Ligado"
+      return `<label class="interruptor"><input type="checkbox" data-aj="${esc(a.id)}" data-lig="${ligado}" data-des="${a.opcoes[1].valor}" ${a.valor === ligado ? 'checked' : ''} aria-label="${esc(a.rotulo)}"><span></span></label>`;
+    }
+    return `<select class="campo" data-aj="${esc(a.id)}" aria-label="${esc(a.rotulo)}">${a.opcoes.map((o) => `<option value="${o.valor}" ${o.valor === a.valor ? 'selected' : ''}>${esc(o.rotulo)}</option>`).join('')}</select>`;
+  };
+
+  alvo.innerHTML = `
+    ${d.windows11 ? '' : faixa('Este Windows é anterior ao 11: ajustes marcados como "(Windows 11)" não terão efeito.', 'info')}
+    <div id="faixaExplorer"></div>
+    <input type="search" class="campo busca-pers" id="buscaAjuste" placeholder="Filtrar ajustes…" aria-label="Filtrar ajustes">
+    <div class="pers-grade">${Object.entries(grupos).map(([g, itens]) => `
+      <div class="bloco" data-grupo><div class="bloco-topo"><h2>${esc(g)}</h2></div><div class="bloco-corpo">${
+        itens.map((a) => `<div data-linha data-texto="${esc((a.rotulo + ' ' + a.descricao).toLowerCase())}">${linhaPers(a.rotulo, a.descricao, controle(a))}</div>`).join('')}</div></div>`).join('')}
+    </div>`;
+
+  $('#buscaAjuste', alvo).addEventListener('input', (e) => {
+    const t = e.target.value.trim().toLowerCase();
+    alvo.querySelectorAll('[data-linha]').forEach((l) => { l.hidden = t && !l.dataset.texto.includes(t); });
+    alvo.querySelectorAll('[data-grupo]').forEach((g) => { g.hidden = !g.querySelector('[data-linha]:not([hidden])'); });
+  });
+
+  const pedirReinicio = () => {
+    const f = $('#faixaExplorer', alvo);
+    f.innerHTML = faixa(`Alguns ajustes só aparecem depois de reiniciar o Explorador de Arquivos (a barra de tarefas some por 2 a 3 segundos).
+      <div class="linha-botoes"><button type="button" class="botao botao-primario" id="btnReiniciarExp">Reiniciar Explorador agora</button></div>`, 'atencao');
+    $('#btnReiniciarExp', f).addEventListener('click', async () => {
+      if (!await confirmar({ titulo: 'Reiniciar o Explorador de Arquivos?', texto: 'Janelas de pastas abertas serão fechadas. Programas e arquivos abertos não são afetados.', botao: 'Reiniciar', perigo: false })) return;
+      try { avisar((await api('personalizacao.reiniciar_explorer', {}, { confirmado: true })).mensagem, 'sucesso'); f.innerHTML = ''; } catch (e) { avisar(e.message, 'erro'); }
+    });
+  };
+
+  alvo.querySelectorAll('[data-aj]').forEach((c) => c.addEventListener('change', async () => {
+    const a = d.ajustes.find((x) => x.id === c.dataset.aj);
+    const anterior = a.valor;
+    const novo = c.type === 'checkbox' ? Number(c.checked ? c.dataset.lig : c.dataset.des) : Number(c.value);
+    const desfazer = () => { if (c.type === 'checkbox') c.checked = anterior === Number(c.dataset.lig); else c.value = anterior; };
+    if (!confirmouNaSessao) {
+      if (!await confirmar({ titulo: 'Alterar a personalização do Windows?', texto: 'Os ajustes afetam apenas o usuário atual deste PC e podem ser desfeitos a qualquer momento nesta mesma tela.\n\nEsta confirmação aparece uma vez por visita à página.', botao: 'Entendi, continuar', perigo: false })) { desfazer(); return; }
+      confirmouNaSessao = true;
+    }
+    c.disabled = true;
+    try {
+      const r = await api('personalizacao.aplicar', { id: a.id, valor: novo }, { confirmado: true });
+      a.valor = r.valor;
+      avisar(r.mensagem, 'sucesso');
+      if (r.explorer) pedirReinicio();
+    } catch (e) { desfazer(); avisar(e.message, 'erro', 7000); }
+    finally { c.disabled = false; }
+  }));
+}
+
+async function paginaPersonalizar(el, ativa) {
+  el.innerHTML = `
+    ${bloco('Aparência deste painel', '', { id: 'persPainel' })}
+    ${bloco('Personalização do Windows', carregandoMini('Lendo ajustes do Windows…'), { id: 'persWindows' })}`;
+  renderAparencia($('#persPainel .bloco-corpo', el));
+  await carregarEm($('#persWindows .bloco-corpo', el), 'personalizacao.estado', () => '', ativa, {}, (alvo, d) => renderAjustesWindows(d, alvo, ativa));
+}
+
 // ---------------------------------------------------------------------
 // Página: Relatório (etapa e)
 // ---------------------------------------------------------------------
@@ -1542,6 +1679,10 @@ async function iniciar() {
   $('#btnMenu').addEventListener('click', () => $('#lateral').classList.toggle('aberto'));
   $('#veu').addEventListener('click', () => $('#lateral').classList.remove('aberto'));
   $('#btnEncerrar').addEventListener('click', encerrarServidor);
+  document.querySelectorAll('.menu a').forEach((a) => { a.title = a.textContent.trim(); });
+  $('#btnRecolher').addEventListener('click', () => salvarPrefs({ recolhida: !lerPrefs().recolhida }));
+  $('#btnTema').addEventListener('click', () => { alternarTema(); });
+  atualizarBotaoTema();
 
   Estado.token = obterToken();
   if (!Estado.token) { telaSemToken(); return; }

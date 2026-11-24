@@ -223,6 +223,7 @@ Ferramenta/
 │   ├─ programas.ps1        winget
 │   ├─ rede.ps1             rede
 │   ├─ seguranca.ps1        segurança
+│   ├─ personalizacao.ps1   personalização do Windows (tema, barra de tarefas, Explorador)
 │   ├─ relatorio.ps1        relatórios
 │   ├─ historico.ps1        histórico por máquina
 │   └─ tarefas/             scripts que rodam em processo separado

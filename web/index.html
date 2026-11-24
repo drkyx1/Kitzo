@@ -6,6 +6,7 @@
   <meta name="referrer" content="no-referrer">
   <title>Kitzo · Manutenção do Windows</title>
   <link rel="stylesheet" href="estilo.css">
+  <script src="tema.js"></script>
 </head>
 <body>
   <!-- Barra de progresso global (aparece enquanto há requisições em andamento) -->
@@ -23,21 +24,22 @@
       </div>
 
       <nav class="menu" aria-label="Seções">
-        <a href="#inicio"      data-pagina="inicio"      data-icone="casa">Início</a>
-        <a href="#diagnostico" data-pagina="diagnostico" data-icone="pulso">Diagnóstico</a>
-        <a href="#reparo"      data-pagina="reparo"      data-icone="chave">Reparo</a>
-        <a href="#limpeza"     data-pagina="limpeza"     data-icone="lixeira">Limpeza</a>
-        <a href="#programas"   data-pagina="programas"   data-icone="grade">Programas</a>
-        <a href="#rede"        data-pagina="rede"        data-icone="globo">Rede</a>
-        <a href="#seguranca"   data-pagina="seguranca"   data-icone="escudo">Segurança</a>
-        <a href="#relatorio"   data-pagina="relatorio"   data-icone="documento">Relatório</a>
-        <a href="#historico"   data-pagina="historico"   data-icone="relogio">Histórico</a>
+        <a href="#inicio"      data-pagina="inicio"      data-icone="casa"><span class="rotulo">Início</span></a>
+        <a href="#diagnostico" data-pagina="diagnostico" data-icone="pulso" title="Diagnóstico"><span class="rotulo">Diagnóstico</span></a>
+        <a href="#reparo"      data-pagina="reparo"      data-icone="chave"><span class="rotulo">Reparo</span></a>
+        <a href="#limpeza"     data-pagina="limpeza"     data-icone="lixeira"><span class="rotulo">Limpeza</span></a>
+        <a href="#programas"   data-pagina="programas"   data-icone="grade"><span class="rotulo">Programas</span></a>
+        <a href="#rede"        data-pagina="rede"        data-icone="globo"><span class="rotulo">Rede</span></a>
+        <a href="#seguranca"   data-pagina="seguranca"   data-icone="escudo"><span class="rotulo">Segurança</span></a>
+        <a href="#personalizar" data-pagina="personalizar" data-icone="paleta" title="Personalizar"><span class="rotulo">Personalizar</span></a>
+        <a href="#relatorio"   data-pagina="relatorio"   data-icone="documento"><span class="rotulo">Relatório</span></a>
+        <a href="#historico"   data-pagina="historico"   data-icone="relogio"><span class="rotulo">Histórico</span></a>
       </nav>
 
       <div class="lateral-rodape">
         <div class="info-pc" id="infoPc"><span class="suave">Conectando…</span></div>
         <button type="button" class="botao botao-fantasma botao-bloco" id="btnEncerrar">
-          <span data-icone="energia"></span> Encerrar servidor
+          <span data-icone="energia"></span><span class="rotulo">Encerrar servidor</span>
         </button>
       </div>
     </aside>
@@ -49,6 +51,8 @@
         <button type="button" class="botao-menu" id="btnMenu" aria-label="Abrir menu" data-icone="menu"></button>
         <h1 id="tituloPagina">Início</h1>
         <div class="topo-acoes" id="topoAcoes"></div>
+        <button type="button" class="botao-tema" id="btnRecolher" aria-label="Recolher menu lateral" title="Recolher/expandir menu" data-icone="recolher"></button>
+        <button type="button" class="botao-tema" id="btnTema" aria-label="Alternar tema claro/escuro" title="Alternar tema claro/escuro" data-icone="lua"></button>
       </header>
       <main class="conteudo" id="conteudo"></main>
     </div>
